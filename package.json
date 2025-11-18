@@ -1,0 +1,46 @@
+{
+  "name": "web-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "compile": "hardhat compile",
+    "deploy": "node scripts/deploy-viem.js",
+    "deploy:hardhat": "hardhat run scripts/deploy.js --network flareTestnet"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "ethers": "^6.9.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^6.21.0",
+    "viem": "^2.39.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
+    "@nomicfoundation/hardhat-ethers": "^4.0.3",
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@nomicfoundation/hardhat-verify": "^3.0.7",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "autoprefixer": "^10.4.16",
+    "chai": "^6.2.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "hardhat": "^3.0.15",
+    "mocha": "^11.7.5",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "vite": "^7.2.2"
+  }
+}
