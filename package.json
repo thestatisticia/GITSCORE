@@ -13,6 +13,7 @@
     "deploy:hardhat": "hardhat run scripts/deploy.js --network flareTestnet"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ethers": "^6.9.0",
     "react": "^19.2.0",
