@@ -88,7 +88,7 @@ export default function Leaderboard({ walletAddress }) {
         <header className="text-center space-y-3">
           <p className="section-title tracking-[0.4em]">GSCORE LEADERBOARD</p>
           <h1 className="text-4xl font-semibold">Global Signal Board</h1>
-          <p className="text-gray-500">
+          <p className="text-white/60">
             Every entry is immutably tied to a wallet + GitHub username via GSCORE.
           </p>
         </header>
@@ -104,49 +104,39 @@ export default function Leaderboard({ walletAddress }) {
           </div>
         )}
 
-        <div className="card">
+        <div className="card card--fluid table-card space-y-6">
           {loading && (
             <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-              <p className="mt-4 text-gray-500">Loading leaderboard...</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white/60"></div>
+              <p className="mt-4 text-white/60">Loading leaderboard...</p>
             </div>
           )}
 
           {error && (
-            <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md mb-4">
+            <div className="alert-card alert-card--danger mb-4">
               {error}
             </div>
           )}
 
           {!loading && leaderboard.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No scores found yet. Be the first to store a score!</p>
+              <p className="text-white/60 text-lg">No scores found yet. Be the first to store a score!</p>
             </div>
           )}
 
           {!loading && leaderboard.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="table-wrapper">
+              <table className="table-surface">
+                <thead>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Rank
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Wallet Address
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      GitHub Username
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Score
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stored On
-                    </th>
+                    <th>Rank</th>
+                    <th>Wallet Address</th>
+                    <th>GitHub Username</th>
+                    <th>Score</th>
+                    <th>Stored On</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody>
                   {leaderboard.map((entry, index) => {
                     const isUserRow =
                       walletAddress &&
@@ -154,45 +144,46 @@ export default function Leaderboard({ walletAddress }) {
                     return (
                       <tr
                         key={entry.address}
-                        className={`hover:bg-gray-50 ${isUserRow ? 'bg-indigo-50' : ''}`}
+                        className={`align-top ${isUserRow ? 'table-row--active' : ''}`}
                       >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-lg font-bold text-gray-900">
-                          {getRankIcon(index + 1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex flex-col">
-                        <span className="text-sm font-mono text-gray-700">
-                          {formatAddress(entry.address)}
-                        </span>
-                          {isUserRow && (
-                            <span className="text-xs text-indigo-600 font-semibold">
-                              Your address
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="text-lg font-bold">
+                            {getRankIcon(index + 1)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-mono text-white/80">
+                              {formatAddress(entry.address)}
                             </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <a
-                          href={`https://github.com/${entry.githubUsername}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                        >
-                          {entry.githubUsername}
-                        </a>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-lg font-bold text-indigo-600">
-                          {entry.score}
-                        </span>
-                        <span className="text-sm text-gray-500"> / 1000</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(entry.timestamp * 1000).toLocaleDateString()}
-                      </td>
-                    </tr>
+                            {isUserRow && (
+                              <span className="text-xs text-white/70 font-semibold">
+                                Your address
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <a
+                            href={`https://github.com/${entry.githubUsername}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-medium"
+                            style={{ color: 'var(--accent)' }}
+                          >
+                            {entry.githubUsername}
+                          </a>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="text-lg font-bold">
+                            {entry.score}
+                          </span>
+                          <span className="text-sm text-white/50"> / 1000</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">
+                          {new Date(entry.timestamp * 1000).toLocaleDateString()}
+                        </td>
+                      </tr>
                     );
                   })}
                 </tbody>
@@ -204,7 +195,7 @@ export default function Leaderboard({ walletAddress }) {
             <div className="mt-6 text-center">
               <button
                 onClick={loadLeaderboard}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                className="secondary-btn w-auto px-6 py-2 text-xs tracking-[0.25em]"
               >
                 Refresh Leaderboard
               </button>

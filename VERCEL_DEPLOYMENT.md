@@ -24,7 +24,7 @@ Go to your Vercel project settings → Environment Variables and add:
 VITE_CONTRACT_ADDRESS=0x7fecba8aa411225388457669aaa86f68e5c0caff
 VITE_API_URL=https://your-vercel-app.vercel.app
 CONTRACT_ADDRESS=0x7fecba8aa411225388457669aaa86f68e5c0caff
-PRIVATE_KEY=5fe6aa8d64d7853bf0594952c19d257773b13362eecbec20c1f4e94576a43e47
+PRIVATE_KEY=your_private_key_here
 RPC_URL=https://coston2-api.flare.network/ext/C/rpc
 ```
 

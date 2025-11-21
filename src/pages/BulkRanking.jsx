@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchGitHubData, calculateScore, SCALING_CONSTANT } from '../utils/github';
 import { storeFdcVerifiedScore, getFdcFlagStatus } from '../utils/contract';
@@ -188,67 +188,65 @@ export default function BulkRanking({ walletAddress }) {
         <header className="text-center space-y-3">
           <p className="section-title tracking-[0.4em]">GSCORE BULK MODE</p>
           <h1 className="text-4xl font-semibold">Rank Entire Cohorts in Minutes</h1>
-          <p className="text-gray-500">
+          <p className="text-white/60">
             Upload a document of GitHub usernames, score and verify them via FDC, and surface the standouts.
           </p>
         </header>
 
-        <div className="card space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Upload usernames file (.txt, .csv)
-            </label>
-            <input
-              type="file"
-              accept=".txt,.csv"
-              onChange={handleFileUpload}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Each line or comma-separated value should contain a GitHub username or profile URL.
-            </p>
-          </div>
+        <div className="card space-y-6">
+          <div className="input-grid">
+            <div className="input-stack full-span">
+              <label>Upload usernames file (.txt, .csv)</label>
+              <input
+                type="file"
+                accept=".txt,.csv"
+                onChange={handleFileUpload}
+                className="input-field cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border file:border-white/20 file:bg-white/10 file:text-white/80 file:uppercase file:tracking-[0.2em]"
+              />
+              <p className="field-hint">
+                Each line or comma-separated value should contain a GitHub username or profile URL.
+              </p>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Or paste usernames manually
-            </label>
-            <textarea
-              rows="3"
-              onChange={handleManualAdd}
-              placeholder="octocat, torvalds, https://github.com/defunkt"
-              className="mt-1 block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
-            ></textarea>
+            <div className="input-stack full-span">
+              <label>Or paste usernames manually</label>
+              <textarea
+                rows="3"
+                onChange={handleManualAdd}
+                placeholder="octocat, torvalds, https://github.com/defunkt"
+                className="input-field min-h-[140px] resize-none"
+              ></textarea>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-white/70">
               {profiles.length} profiles ready for scoring.
             </p>
             <button
               onClick={handleCalculateScores}
               disabled={profiles.length === 0 || isCalculating}
-              className="inline-flex items-center justify-center px-5 py-2 rounded-md bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="primary-btn w-auto px-8 disabled:opacity-40"
             >
               {isCalculating ? 'Calculating...' : 'Calculate Scores'}
             </button>
           </div>
 
           {uploadError && (
-            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
+            <div className="alert-card alert-card--danger text-sm">
               {uploadError}
             </div>
           )}
         </div>
 
         {profiles.length > 0 && (
-          <div className="card overflow-x-auto">
+          <div className="card card--fluid table-card">
             {recommendations && (
-              <div className="mb-6 border border-emerald-100 bg-emerald-50 rounded-lg p-4">
+              <div className="info-banner info-banner--accent mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
-                    <p className="text-sm text-emerald-700 mb-1">Recommendation snapshot saved</p>
-                    <p className="text-lg font-semibold text-emerald-900">
+                    <p className="text-sm text-white/70 mb-1">Recommendation snapshot saved</p>
+                    <p className="text-lg font-semibold text-white">
                       Top performer:{' '}
                       {recommendations.topPerformers?.[0]
                         ? `${recommendations.topPerformers[0].username} (${recommendations.topPerformers[0].score}/1000)`
@@ -257,110 +255,117 @@ export default function BulkRanking({ walletAddress }) {
                   </div>
                   <Link
                     to="/recommendations"
-                    className="inline-flex px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700"
+                    className="secondary-btn w-auto px-6 py-2 text-xs tracking-[0.2em]"
                   >
                     View Recommendations Page
                   </Link>
                 </div>
               </div>
             )}
-            <table className="table-surface">
-              <thead>
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Rank</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Username</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Score</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Followers</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Stars</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Repos</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Top Repos</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Verification</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Flag Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Action</th>
-                </tr>
-              </thead>
-                <tbody>
-                {sortedProfiles.map((profile, index) => (
-                  <tr key={profile.username} className="align-top">
-                    <td className="px-4 py-3 text-sm text-gray-500">{index + 1}</td>
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-gray-900">{profile.username}</div>
-                      {profile.error && (
-                        <p className="text-xs text-red-500">{profile.error}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {profile.score !== null ? (
-                        <div>
-                          <p className="font-bold text-indigo-700">{profile.score}</p>
-                          <p className="text-xs text-gray-500">/ {SCALING_CONSTANT}</p>
-                        </div>
-                      ) : (
-                        <span className="text-sm text-gray-400 capitalize">{profile.status}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {profile.githubData?.followers ?? '-'}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {profile.githubData?.totalStars ?? '-'}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {profile.githubData?.publicRepos ?? '-'}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      <div className="space-y-1">
-                        {profile.githubData?.topRepos?.map((repo) => (
-                          <a
-                            key={repo.url}
-                            href={repo.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="block text-indigo-600 hover:underline text-xs"
-                          >
-                            {repo.name} ({repo.stars}★)
-                          </a>
-                        )) || '-'}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      {profile.status === 'verified' && profile.fdc ? (
-                        <div className="text-emerald-700">
-                          <p className="font-semibold flex items-center">
-                            <span className="inline-flex items-center justify-center w-5 h-5 mr-2 rounded-full bg-emerald-600 text-white text-xs">✓</span>
-                            FDC Verified
-                          </p>
-                          <p className="text-xs text-gray-500 break-all">
-                            {profile.fdc.fdcAttestationId}
-                          </p>
-                        </div>
-                      ) : (
-                        <p className="text-xs text-gray-500 capitalize">{profile.status}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {profile.flag?.flagged ? (
-                        <div className="text-sm text-red-600">
-                          <p className="font-semibold">Flagged</p>
-                          <p className="text-xs break-all">{profile.flag.entry?.reason}</p>
-                        </div>
-                      ) : (
-                        <p className="text-xs text-gray-500">None</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => handleFdcVerify(profile)}
-                        disabled={profile.status !== 'scored' || !walletAddress}
-                        className="px-4 py-2 text-sm rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed"
-                      >
-                        Verify via FDC
-                      </button>
-                    </td>
+            <div className="table-wrapper p-0">
+              <table className="table-surface">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Followers</th>
+                    <th>Stars</th>
+                    <th>Repos</th>
+                    <th>Top Repos</th>
+                    <th>Verification</th>
+                    <th>Flag Status</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sortedProfiles.map((profile, index) => (
+                    <tr key={profile.username} className="align-top">
+                      <td className="px-4 py-3 text-sm text-white/70">{index + 1}</td>
+                      <td className="px-4 py-3">
+                        <div className="font-semibold">{profile.username}</div>
+                        {profile.error && (
+                          <p className="text-xs text-red-400">{profile.error}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {profile.score !== null ? (
+                          <div>
+                            <p className="font-bold">{profile.score}</p>
+                            <p className="text-xs text-white/60">/ {SCALING_CONSTANT}</p>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-white/50 capitalize">{profile.status}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-white/80">
+                        {profile.githubData?.followers ?? '-'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-white/80">
+                        {profile.githubData?.totalStars ?? '-'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-white/80">
+                        {profile.githubData?.publicRepos ?? '-'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-white/80">
+                        <div className="space-y-1">
+                          {profile.githubData?.topRepos?.length ? (
+                            profile.githubData.topRepos.map((repo) => (
+                              <a
+                                key={repo.url}
+                                href={repo.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block text-xs"
+                                style={{ color: 'var(--accent)' }}
+                              >
+                                {repo.name} ({repo.stars}★)
+                              </a>
+                            ))
+                          ) : (
+                            <span>-</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {profile.status === 'verified' && profile.fdc ? (
+                          <div className="text-white">
+                            <p className="font-semibold flex items-center gap-2">
+                              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-400 text-black text-xs">✓</span>
+                              FDC Verified
+                            </p>
+                            <p className="text-xs text-white/60 break-all">
+                              {profile.fdc.fdcAttestationId}
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-white/60 capitalize">{profile.status}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {profile.flag?.flagged ? (
+                          <div className="text-sm text-white">
+                            <p className="font-semibold" style={{ color: 'var(--danger)' }}>Flagged</p>
+                            <p className="text-xs break-all text-white/70">{profile.flag.entry?.reason}</p>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-white/60">None</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => handleFdcVerify(profile)}
+                          disabled={profile.status !== 'scored' || !walletAddress}
+                          className="secondary-btn w-auto px-5 py-2 text-xs tracking-[0.2em] disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          Verify via FDC
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

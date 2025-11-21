@@ -10,10 +10,10 @@ const NAV_ITEMS = [
   { path: '/recommendations', label: 'INSIGHTS' },
 ];
 
-const IconButton = ({ children, ...props }) => (
+const IconButton = ({ children, className = '', ...props }) => (
   <button
     {...props}
-    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-sm hover:bg-white hover:text-black transition"
+    className={`w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-sm text-white/80 hover:text-white hover:bg-white/10 transition ${className}`}
   >
     {children}
   </button>
@@ -40,13 +40,13 @@ export default function Navbar({ walletAddress, onWalletConnect }) {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-30 bg-[#0b0b0c] border-b border-white/10">
+    <nav className="sticky top-0 z-30 navbar-shell">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center">
         <Link to="/" className="flex items-center space-x-3 mr-12">
-          <div className="h-9 w-9 rounded-full border border-white/15 flex items-center justify-center text-sm">
+          <div className="h-9 w-9 rounded-full border border-white/15 flex items-center justify-center text-sm text-white">
             G
           </div>
-          <p className="text-xl font-semibold tracking-[0.4em] uppercase">GITSCORE</p>
+          <p className="text-xl font-semibold tracking-[0.35em] uppercase text-white">GITSCORE</p>
         </Link>
 
         <div className="flex items-center gap-6 flex-1 justify-center text-xs tracking-[0.3em]">
@@ -54,8 +54,10 @@ export default function Navbar({ walletAddress, onWalletConnect }) {
             <Link
               key={nav.path}
               to={nav.path}
-              className={`text-xs tracking-[0.3em] ${
-                isActive(nav.path) ? 'text-white' : 'text-gray-400 hover:text-white'
+              className={`nav-pill text-xs tracking-[0.25em] ${
+                isActive(nav.path)
+                  ? 'nav-pill--active'
+                  : 'text-white/50 hover:text-white/90 hover:border-white/20'
               }`}
             >
               {nav.label}
@@ -64,7 +66,9 @@ export default function Navbar({ walletAddress, onWalletConnect }) {
         </div>
 
         <div className="ml-auto flex items-center gap-3">
-          <IconButton aria-label="Notifications">🔔</IconButton>
+          <IconButton aria-label="Notifications">
+            🔔
+          </IconButton>
           {walletAddress ? (
             <button
               onClick={() => onWalletConnect?.(null)}

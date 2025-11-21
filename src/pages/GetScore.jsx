@@ -194,7 +194,7 @@ export default function GetScore({ walletAddress }) {
         <header className="text-center space-y-3">
           <p className="section-title tracking-[0.4em]">GSCORE CALCULATOR</p>
           <h1 className="text-4xl font-semibold">Measure. Verify. Signal.</h1>
-          <p className="text-gray-500 max-w-2xl mx-auto">
+          <p className="text-white/60 max-w-2xl mx-auto">
             Upload any GitHub profile, calculate the score, and anchor it on Flare with an FDC
             attestation badge.
           </p>
@@ -206,56 +206,52 @@ export default function GetScore({ walletAddress }) {
             Profile Input
           </h2>
 
-          <form onSubmit={handleScoreCalculation} className="space-y-4">
-            <div>
-              <label htmlFor="github-profile" className="text-xs tracking-[0.3em] uppercase text-gray-500">
-                GitHub Username
-              </label>
-              <input
-                id="github-profile"
-                type="text"
-                value={githubUsername}
-                onChange={(e) => setGithubUsername(e.target.value)}
-                placeholder="e.g., octocat"
-                required
-                className="input-field mt-2"
-              />
+          <form onSubmit={handleScoreCalculation} className="space-y-6">
+            <div className="input-grid">
+              <div className="input-stack">
+                <label htmlFor="github-profile">GitHub Username</label>
+                <input
+                  id="github-profile"
+                  type="text"
+                  value={githubUsername}
+                  onChange={(e) => setGithubUsername(e.target.value)}
+                  placeholder="e.g., octocat"
+                  required
+                  className="input-field"
+                />
+              </div>
+
+              <div className="input-stack full-span">
+                <label htmlFor="github-pat">Personal Access Token (Optional)</label>
+                <input
+                  id="github-pat"
+                  type="password"
+                  value={githubPat}
+                  onChange={(e) => setGithubPat(e.target.value)}
+                  placeholder="Paste PAT here to include private data"
+                  className="input-field"
+                />
+                <p className="field-hint">Only use tokens with minimal permissions.</p>
+              </div>
             </div>
 
             {flagStatus?.flagged && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-xs">
+              <div className="alert-card alert-card--warning text-sm">
                 Warning: this username was previously flagged during FDC verification ({flagStatus.entry?.reason}).
                 Scores may fail to verify until the issue is resolved.
               </div>
             )}
 
-            <div>
-              <label htmlFor="github-pat" className="text-xs tracking-[0.3em] uppercase text-gray-500">
-                Personal Access Token (Optional)
-              </label>
-              <input
-                id="github-pat"
-                type="password"
-                value={githubPat}
-                onChange={(e) => setGithubPat(e.target.value)}
-                placeholder="Paste PAT here to include private data"
-                className="input-field mt-2"
-              />
-              <p className="mt-2 text-xs text-gray-500">
-                Only use tokens with minimal permissions.
-              </p>
-            </div>
-
             <button
               type="submit"
               disabled={!walletAddress || isLoading}
-              className="primary-btn mt-4"
+              className="primary-btn mt-2"
             >
               {isLoading ? 'Calculating…' : `Calculate Score for ${targetUsername}`}
             </button>
 
             {error && (
-              <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
+              <div className="alert-card alert-card--danger text-sm">
                 Error: {error}
               </div>
             )}
@@ -268,14 +264,14 @@ export default function GetScore({ walletAddress }) {
               <div>
                 <p className="section-title">Final GitHub Score</p>
                 <p className="text-5xl font-semibold">{score}</p>
-                <p className="text-sm text-gray-500">Out of {SCALING_CONSTANT}</p>
+                <p className="text-sm text-white/60">Out of {SCALING_CONSTANT}</p>
               </div>
               <div className="pill">
                 {rawData.followers} followers • {rawData.publicRepos} repos
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <h3 className="section-title">Score Breakdown</h3>
               {factorData.map((factor) => {
                 const normalized = rawData.normalizedFactors[factor.key];
@@ -284,19 +280,14 @@ export default function GetScore({ walletAddress }) {
                 const barWidth = Math.min(100, Math.max(5, percentage));
 
                 return (
-                  <div key={factor.key} className="bg-gray-50 p-3 rounded-lg shadow-sm">
-                    <div className="flex justify-between items-center text-sm font-medium mb-2">
+                  <div key={factor.key} className="metric-card">
+                    <div className="metric-card__header">
                       <span>{factor.label}</span>
-                      <span className="text-gray-500">Raw: {factor.raw}</span>
-                      <span>
-                        {contribution.toFixed(0)} ({factor.weight * 100}%)
-                      </span>
+                      <span className="text-white/60">Raw: {factor.raw}</span>
+                      <span>{contribution.toFixed(0)} ({factor.weight * 100}%)</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div
-                        className="bg-indigo-400 h-2.5 rounded-full transition-all duration-500"
-                        style={{ width: `${barWidth}%` }}
-                      ></div>
+                    <div className="metric-card__track">
+                      <div className="metric-card__value" style={{ width: `${barWidth}%` }}></div>
                     </div>
                   </div>
                 );
@@ -305,9 +296,9 @@ export default function GetScore({ walletAddress }) {
 
             {walletAddress && (
               <div className="space-y-3">
-              <button
-                onClick={handleStoreScore}
-                disabled={isStoring}
+                <button
+                  onClick={handleStoreScore}
+                  disabled={isStoring}
                   className="primary-btn"
                 >
                   {isStoring ? 'Storing on Flare…' : 'Store Score (Wallet Tx)'}
@@ -317,19 +308,19 @@ export default function GetScore({ walletAddress }) {
                   onClick={handleStoreFdcScore}
                   disabled={isFdcStoring}
                   className="secondary-btn"
-              >
+                >
                   {isFdcStoring ? 'Verifying via FDC…' : 'Store with FDC Verification'}
-              </button>
-                <p className="text-xs text-gray-500 text-center">
+                </button>
+                <p className="text-xs text-white/60 text-center">
                   FDC-verified storage routes the data through the backend owner wallet and tags it on-chain as verified.
                 </p>
               </div>
             )}
 
             {fdcStatus && (
-              <div className="p-4 border border-emerald-300 bg-emerald-50 rounded-lg text-sm text-emerald-800">
-                <p className="font-semibold flex items-center">
-                  <span className="inline-flex items-center justify-center w-5 h-5 mr-2 rounded-full bg-emerald-600 text-white text-xs">✓</span>
+              <div className="alert-card alert-card--success text-sm">
+                <p className="font-semibold flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-400 text-black text-xs">✓</span>
                   FDC verification successful
                 </p>
                 <p className="mt-2 break-all">

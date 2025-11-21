@@ -19,7 +19,7 @@ export default function Recommendations() {
         <div className="gscore-container">
           <div className="card text-center space-y-4">
             <h1 className="text-3xl font-semibold">Recommendations</h1>
-            <p className="text-gray-500">
+            <p className="text-white/60">
               Upload a bulk GitHub document and calculate scores first. Your latest recommendations
               will appear here automatically.
             </p>
@@ -40,27 +40,27 @@ export default function Recommendations() {
         <header className="text-center space-y-3">
           <p className="section-title tracking-[0.4em]">GSCORE INSIGHTS</p>
           <h1 className="text-4xl font-semibold">Recommendation Insights</h1>
-          <p className="text-gray-500">
+          <p className="text-white/60">
             Based on your latest bulk scoring batch ({new Date(snapshot.timestamp).toLocaleString()}).
           </p>
         </header>
 
         <div className="card space-y-6">
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Top Recommended Profiles</h2>
+            <h2 className="text-2xl font-bold mb-4">Top Recommended Profiles</h2>
             {recommendations.topPerformers?.length ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {recommendations.topPerformers.map((profile) => (
                   <div
                     key={profile.username}
-                    className="border rounded-lg p-4 bg-gray-50 shadow-sm"
+                    className="stat-card"
                   >
-                    <p className="text-sm text-gray-500 mb-1">Rank {profile.rank}</p>
-                    <p className="text-xl font-bold text-gray-900">{profile.username}</p>
-                    <p className="text-lg text-indigo-700 font-semibold">
-                      {profile.score} <span className="text-sm text-gray-500">/ {SCALING_CONSTANT}</span>
+                    <p className="text-sm text-white/60 mb-1">Rank {profile.rank}</p>
+                    <p className="text-xl font-bold">{profile.username}</p>
+                    <p className="text-lg font-semibold">
+                      {profile.score} <span className="text-sm text-white/60">/ {SCALING_CONSTANT}</span>
                     </p>
-                    <ul className="text-sm text-gray-600 mt-2 space-y-1">
+                    <ul className="text-sm text-white/70 mt-2 space-y-1">
                       <li>Followers: {profile.followers ?? '—'}</li>
                       <li>Total Stars: {profile.stars ?? '—'}</li>
                       <li>Status: {profile.verification}</li>
@@ -69,12 +69,12 @@ export default function Recommendations() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">No scored profiles yet.</p>
+              <p className="text-white/60">No scored profiles yet.</p>
             )}
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Standout Repositories</h2>
+            <h2 className="text-2xl font-bold mb-4">Standout Repositories</h2>
             {recommendations.standoutRepos?.length ? (
               <div className="space-y-3">
                 {recommendations.standoutRepos.map((repo) => (
@@ -83,25 +83,25 @@ export default function Recommendations() {
                     href={repo.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="block border rounded-lg p-4 hover:border-indigo-400 transition-colors bg-white shadow-sm"
+                    className="block stat-card hover:border-white/40 transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-500">{repo.owner}</p>
-                        <p className="text-lg font-semibold text-gray-900">{repo.name}</p>
+                        <p className="text-sm text-white/60">{repo.owner}</p>
+                        <p className="text-lg font-semibold">{repo.name}</p>
                       </div>
-                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                      <span className="table-tag">
                         ★ {repo.stars}
                       </span>
                     </div>
                     {repo.description && (
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{repo.description}</p>
+                      <p className="text-sm text-white/70 mt-2 line-clamp-2">{repo.description}</p>
                     )}
                   </a>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600">No standout repos captured yet.</p>
+              <p className="text-white/60">No standout repos captured yet.</p>
             )}
           </section>
         </div>

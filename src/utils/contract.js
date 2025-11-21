@@ -67,7 +67,7 @@ const CONTRACT_ABI = [
 ];
 
 // Backend API URL for FDC integration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 
 export const getContract = async (readOnly = false) => {
   if (typeof window.ethereum === 'undefined') {
